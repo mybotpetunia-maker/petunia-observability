@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-04 14:40 CT",
+  "updatedAt": "2026-03-04 14:46 CT",
   "project": "Ops / Coltrane / Access Gating",
   "currentTask": "Supabase shared-state + allowlist gating rollout",
   "status": "running",
@@ -10,16 +10,16 @@
       "step": "Implement Supabase-backed check/uncheck persistence",
       "state": "in_progress",
       "owner": "Petunia",
-      "progress": 68,
-      "eta": "~18m",
+      "progress": 72,
+      "eta": "~15m",
       "blocker": ""
     },
     {
       "step": "Apply Gmail allowlist gating policy to sites",
       "state": "in_progress",
       "owner": "Petunia",
-      "progress": 45,
-      "eta": "~20m",
+      "progress": 50,
+      "eta": "~18m",
       "blocker": ""
     },
     {
@@ -28,6 +28,25 @@
       "owner": "Petunia",
       "progress": 100,
       "eta": "done",
+      "completedAt": "2026-03-04 14:28 CT",
+      "blocker": ""
+    },
+    {
+      "step": "Split active vs completed task lists",
+      "state": "done",
+      "owner": "Petunia",
+      "progress": 100,
+      "eta": "done",
+      "completedAt": "2026-03-04 14:40 CT",
+      "blocker": ""
+    },
+    {
+      "step": "Add fixed-height scrollable completed module (newest first)",
+      "state": "done",
+      "owner": "Petunia",
+      "progress": 100,
+      "eta": "done",
+      "completedAt": "2026-03-04 14:46 CT",
       "blocker": ""
     }
   ],
@@ -51,17 +70,17 @@
     {
       "name": "Lane C — Observability",
       "task": "Keep dashboard concise, accurate, and high-signal",
-      "status": "done",
+      "status": "running",
       "nextAction": "Maintain real-time sync with lane state",
       "owner": "Petunia",
       "blockerOwner": "none"
     }
   ],
   "events": [
-    "14:22 CT | Captured allowlist emails for all mybotpetunia.com subdomains",
     "14:28 CT | Removed low-signal top section; switched to concise 'Now' summary",
     "14:39 CT | Keeper view-only access verified; OAuth record readable",
-    "14:40 CT | Active/completed split added (100% items moved out of Active)"
+    "14:40 CT | Active/completed split added (100% items moved out of Active)",
+    "14:46 CT | Completed module made fixed-height + scrollable, newest-first ordering"
   ],
   "worklog": [
     "Observability dashboard simplified for signal",
