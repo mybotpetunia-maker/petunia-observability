@@ -1,13 +1,14 @@
 {
-  "updatedAt": "2026-03-04 13:14 CT",
-  "currentTask": "Build observability dashboard + wire custom domain",
-  "status": "Running",
-  "statusClass": "warn",
-  "blocker": "Pending domain DNS cutover in Porkbun after Vercel domain attach",
-  "nextAction": "Create Vercel project from petunia-observability repo and attach observability.mybotpetunia.com",
+  "updatedAt": "2026-03-04 13:17 CT",
+  "currentTask": "Coltrane tracker reliability fixes + Supabase sync lane",
+  "status": "Live",
+  "statusClass": "ok",
+  "blocker": "None",
+  "nextAction": "Implement backend shared state (Supabase) and move tracker from local-only storage",
   "worklog": [
-    "Repo created: mybotpetunia-maker/petunia-observability",
-    "Built initial dashboard UI with auto-refresh",
-    "Preparing Vercel import + domain setup"
+    "Created and deployed observability dashboard",
+    "Custom domain connected: observability.mybotpetunia.com",
+    "DNS + SSL verified",
+    "Timezone bug in tracker identified and patched"
   ]
 }
