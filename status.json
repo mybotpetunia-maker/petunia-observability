@@ -1,71 +1,70 @@
 {
-  "updatedAt": "2026-03-04 14:05 CT",
-  "project": "Coltrane Tracker + Observability",
-  "currentTask": "Supabase shared-state migration + production schedule hardening",
-  "status": "Running",
-  "statusClass": "warn",
+  "updatedAt": "2026-03-04 14:28 CT",
+  "project": "Ops / Coltrane / Access Gating",
+  "currentTask": "Clean observability UI + continue Supabase/shared-state work",
+  "status": "running",
   "blocker": "None",
-  "nextAction": "Create shared dose-completion table + RLS, wire frontend writes/reads, run multi-browser QA",
+  "nextAction": "Finish Supabase shared check-state implementation and run cross-browser QA",
   "activeWork": [
     {
-      "step": "Create Supabase schema for shared dose completion state",
-      "state": "in_progress",
+      "step": "Refactor observability page to remove low-signal top cards",
+      "state": "done",
       "owner": "Petunia",
-      "progress": 60,
-      "eta": "~12m",
+      "progress": 100,
+      "eta": "done",
       "blocker": ""
     },
     {
-      "step": "Integrate tracker frontend with Supabase reads/writes",
-      "state": "queued",
+      "step": "Implement Supabase-backed check/uncheck persistence",
+      "state": "in_progress",
       "owner": "Petunia",
-      "progress": 25,
+      "progress": 62,
       "eta": "~20m",
       "blocker": ""
+    },
+    {
+      "step": "Apply Gmail allowlist gating policy to sites",
+      "state": "queued",
+      "owner": "Petunia",
+      "progress": 30,
+      "eta": "~15m after OAuth app ready",
+      "blocker": "Google OAuth app credentials not yet provided"
     }
   ],
   "lanes": [
     {
-      "name": "Lane A — Production tracker fixes",
-      "task": "Fix med schedule rendering/timestamps and verify anchors on mobile",
+      "name": "Lane A — Coltrane sync",
+      "task": "Move tracker from local-only state to Supabase shared state",
       "status": "running",
-      "nextAction": "Finalize and verify schedule rendering",
+      "nextAction": "Schema + RLS + frontend integration + QA",
       "owner": "Petunia",
       "blockerOwner": "none"
     },
     {
-      "name": "Lane B — Shared backend sync",
-      "task": "Implement Supabase-backed check/uncheck state across browsers/devices",
-      "status": "running",
-      "nextAction": "Apply schema + wire client + run cross-browser QA",
+      "name": "Lane B — Access gating",
+      "task": "Default-private Gmail allowlist auth for mybotpetunia.com subdomains",
+      "status": "blocked",
+      "nextAction": "Apply after OAuth client id/secret are available",
       "owner": "Petunia",
-      "blockerOwner": "none"
+      "blockerOwner": "Tara"
     },
     {
       "name": "Lane C — Observability",
-      "task": "Expose project name + lane task detail in live dashboard",
-      "status": "done",
-      "nextAction": "Keep status payload in sync with active execution",
+      "task": "Keep dashboard concise, accurate, and high-signal",
+      "status": "running",
+      "nextAction": "Maintain real-time task feed while other lanes execute",
       "owner": "Petunia",
       "blockerOwner": "none"
     }
   ],
   "events": [
-    "13:12 CT | Repo created: mybotpetunia-maker/petunia-observability",
-    "13:14 CT | Initial dashboard deployed on Vercel",
-    "13:16 CT | Domain attached: observability.mybotpetunia.com",
-    "13:17 CT | Porkbun DNS CNAME added + HTTPS verified",
-    "13:20 CT | Added Active Work live panel (3s refresh)",
-    "13:33 CT | Added lanes + timeline + progress/ETA",
-    "13:46 CT | Cleared stale blocker flag; Supabase work is in-progress",
-    "14:05 CT | Added project-name and lane task-detail visibility"
+    "14:05 CT | Added project-name and lane task-detail visibility",
+    "14:22 CT | Captured allowlist emails for all mybotpetunia.com subdomains",
+    "14:28 CT | Removed low-signal top section; switched to concise 'Now' summary"
   ],
   "worklog": [
-    "Created and deployed observability dashboard",
-    "Custom domain connected: observability.mybotpetunia.com",
-    "DNS + SSL verified",
-    "Added live active-work stream + lane/timeline/progress telemetry",
-    "Started Supabase shared-state implementation",
-    "Added project and task-level detail cards"
+    "Observability dashboard simplified for signal",
+    "Supabase shared-state migration in progress",
+    "Allowlist policy captured and ready to enforce"
   ]
 }
