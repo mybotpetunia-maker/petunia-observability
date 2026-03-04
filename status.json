@@ -1,42 +1,42 @@
 {
-  "updatedAt": "2026-03-04 13:33 CT",
-  "currentTask": "Coltrane tracker hardening + shared-state migration",
+  "updatedAt": "2026-03-04 13:46 CT",
+  "currentTask": "Wire Supabase-backed shared check state into Coltrane tracker",
   "status": "Running",
   "statusClass": "warn",
-  "blocker": "Supabase shared-state auth/config handoff pending",
-  "nextAction": "Finish Supabase-backed shared state and cut over tracker from local-only persistence",
+  "blocker": "None",
+  "nextAction": "Create doses table + RLS policies, then cut tracker from local-only to shared state",
   "activeWork": [
     {
-      "step": "Patch Coltrane schedule/timezone correctness",
+      "step": "Create Supabase schema for shared dose completion state",
       "state": "in_progress",
       "owner": "Petunia",
-      "progress": 85,
-      "eta": "~10m",
+      "progress": 55,
+      "eta": "~12m",
       "blocker": ""
     },
     {
-      "step": "Implement Supabase shared check-state",
+      "step": "Integrate tracker frontend with Supabase reads/writes",
       "state": "queued",
       "owner": "Petunia",
-      "progress": 35,
-      "eta": "~25m",
-      "blocker": "Need final project keys confirmation"
+      "progress": 20,
+      "eta": "~20m",
+      "blocker": ""
     }
   ],
   "lanes": [
     {
       "name": "Lane A — Production tracker fixes",
       "status": "running",
-      "nextAction": "Publish DST-safe cadence + verify on mobile",
+      "nextAction": "Finalize and verify schedule rendering",
       "owner": "Petunia",
       "blockerOwner": "none"
     },
     {
       "name": "Lane B — Shared backend sync",
-      "status": "blocked",
-      "nextAction": "Inject Supabase URL/key and run E2E sync QA",
+      "status": "running",
+      "nextAction": "Apply schema + wire client + run cross-browser QA",
       "owner": "Petunia",
-      "blockerOwner": "Tara"
+      "blockerOwner": "none"
     }
   ],
   "events": [
@@ -45,12 +45,14 @@
     "13:16 CT | Domain attached: observability.mybotpetunia.com",
     "13:17 CT | Porkbun DNS CNAME added + HTTPS verified",
     "13:20 CT | Added Active Work live panel (3s refresh)",
-    "13:33 CT | Added lanes + timeline + progress/ETA"
+    "13:33 CT | Added lanes + timeline + progress/ETA",
+    "13:46 CT | Cleared stale blocker flag; Supabase work is in-progress"
   ],
   "worklog": [
     "Created and deployed observability dashboard",
     "Custom domain connected: observability.mybotpetunia.com",
     "DNS + SSL verified",
-    "Added live active-work stream + lane/timeline/progress telemetry"
+    "Added live active-work stream + lane/timeline/progress telemetry",
+    "Started Supabase shared-state implementation"
   ]
 }
