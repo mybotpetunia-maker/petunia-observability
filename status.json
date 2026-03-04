@@ -1,14 +1,26 @@
 {
-  "updatedAt": "2026-03-04 13:17 CT",
-  "currentTask": "Coltrane tracker reliability fixes + Supabase sync lane",
-  "status": "Live",
-  "statusClass": "ok",
+  "updatedAt": "2026-03-04 13:20 CT",
+  "currentTask": "Implementing live active-work telemetry on observability dashboard",
+  "status": "Running",
+  "statusClass": "warn",
   "blocker": "None",
-  "nextAction": "Implement backend shared state (Supabase) and move tracker from local-only storage",
+  "nextAction": "Deploy dashboard update and verify live 3s refresh in production",
+  "activeWork": [
+    {
+      "step": "Patch UI for live active-work section",
+      "state": "in_progress",
+      "startedAt": "13:19 CT"
+    },
+    {
+      "step": "Deploy update to GitHub/Vercel",
+      "state": "queued",
+      "startedAt": "13:20 CT"
+    }
+  ],
   "worklog": [
     "Created and deployed observability dashboard",
     "Custom domain connected: observability.mybotpetunia.com",
     "DNS + SSL verified",
-    "Timezone bug in tracker identified and patched"
+    "Adding live active-work stream (3s refresh)"
   ]
 }
