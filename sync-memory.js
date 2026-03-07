@@ -1,15 +1,17 @@
 #!/usr/bin/env node
-// Sync workspace memory to observability data
 const fs = require('fs');
 const path = require('path');
 
 const WORKSPACE = process.env.WORKSPACE || '/Users/petunia1/.openclaw/workspace';
-const TODAY = new Date().toISOString().split("T")[0];
+
+// Use local date in America/Chicago timezone
+const now = new Date();
+const cstDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+const TODAY = cstDate.toISOString().split('T')[0];
 const MEMORY_FILE = path.join(WORKSPACE, 'memory', `${TODAY}.md`);
 
 let completedTasks = [];
 
-// Parse today's memory file for completed tasks (if it exists)
 if (fs.existsSync(MEMORY_FILE)) {
   const content = fs.readFileSync(MEMORY_FILE, 'utf8');
   const sections = content.split(/^## /gm).filter(s => s.trim());
@@ -36,8 +38,6 @@ if (fs.existsSync(MEMORY_FILE)) {
   }
 }
 
-// Build status object
-const now = new Date();
 const status = {
   updatedAt: now.toLocaleString('en-US', { 
     timeZone: 'America/Chicago',
@@ -53,7 +53,7 @@ const status = {
   status: "running",
   blocker: "None",
   activeWork: [],
-  completedTasks: completedTasks.reverse(), // Newest first
+  completedTasks: completedTasks.reverse(),
   lanes: [
     {
       name: "Lane A — Coltrane Tracker",
