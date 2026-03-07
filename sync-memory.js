@@ -3,17 +3,19 @@ const fs = require('fs');
 const path = require('path');
 
 const WORKSPACE = process.env.WORKSPACE || '/Users/petunia1/.openclaw/workspace';
+const MEMORY_DIR = path.join(WORKSPACE, 'memory');
 
-// Use local date in America/Chicago timezone
-const now = new Date();
-const cstDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-const TODAY = cstDate.toISOString().split('T')[0];
-const MEMORY_FILE = path.join(WORKSPACE, 'memory', `${TODAY}.md`);
+// Find all memory files from the last 2 days
+const files = fs.readdirSync(MEMORY_DIR)
+  .filter(f => f.match(/^\d{4}-\d{2}-\d{2}\.md$/))
+  .sort()
+  .slice(-2); // Last 2 files
 
 let completedTasks = [];
 
-if (fs.existsSync(MEMORY_FILE)) {
-  const content = fs.readFileSync(MEMORY_FILE, 'utf8');
+for (const file of files) {
+  const filePath = path.join(MEMORY_DIR, file);
+  const content = fs.readFileSync(filePath, 'utf8');
   const sections = content.split(/^## /gm).filter(s => s.trim());
   const completed = sections.filter(s => s.startsWith('Completed Tasks'));
 
@@ -22,6 +24,7 @@ if (fs.existsSync(MEMORY_FILE)) {
     const header = lines[0];
     const timeMatch = header.match(/\(([^)]+)\)/);
     const time = timeMatch ? timeMatch[1] : '';
+    const date = file.replace('.md', '');
     
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i];
@@ -30,7 +33,7 @@ if (fs.existsSync(MEMORY_FILE)) {
         completedTasks.push({ 
           step: task, 
           owner: 'Petunia', 
-          completedAt: `${TODAY} ${time}`, 
+          completedAt: `${date} ${time}`, 
           state: 'done' 
         });
       }
@@ -38,6 +41,7 @@ if (fs.existsSync(MEMORY_FILE)) {
   }
 }
 
+const now = new Date();
 const status = {
   updatedAt: now.toLocaleString('en-US', { 
     timeZone: 'America/Chicago',
@@ -53,7 +57,7 @@ const status = {
   status: "running",
   blocker: "None",
   activeWork: [],
-  completedTasks: completedTasks.reverse(),
+  completedTasks: completedTasks.reverse().slice(0, 20), // Last 20 tasks, newest first
   lanes: [
     {
       name: "Lane A — Coltrane Tracker",
@@ -73,8 +77,8 @@ const status = {
     }
   ],
   events: [`${now.toLocaleTimeString('en-US', {timeZone: 'America/Chicago'})} CT | Synced from workspace memory`],
-  worklog: completedTasks.map(t => t.step).slice(0, 5)
+  worklog: completedTasks.slice(0, 5).map(t => t.step)
 };
 
 fs.writeFileSync('data.json', JSON.stringify(status, null, 2));
-console.log(`✅ Synced ${completedTasks.length} completed tasks to data.json`);
+console.log(`✅ Synced ${completedTasks.length} completed tasks from ${files.length} memory files`);
