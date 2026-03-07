@@ -1,11 +1,29 @@
 {
-  "updatedAt": "03/06/2026, 09:28 PM CST",
+  "updatedAt": "03/06/2026, 10:52 PM CST",
   "project": "Live Operations Dashboard",
   "currentTask": "Real-time observability tracking",
   "status": "running",
   "blocker": "None",
   "activeWork": [],
   "completedTasks": [
+    {
+      "step": "Fixed Coltrane dashboard - restored checkboxes and tracking",
+      "owner": "Petunia",
+      "completedAt": "2026-03-06 9:52 PM",
+      "state": "done"
+    },
+    {
+      "step": "Fixed observability dashboard display bug",
+      "owner": "Petunia",
+      "completedAt": "2026-03-06 9:49 PM",
+      "state": "done"
+    },
+    {
+      "step": "Fixed observability sync timezone issue",
+      "owner": "Petunia",
+      "completedAt": "2026-03-06 9:30 PM",
+      "state": "done"
+    },
     {
       "step": "Rebuilt observability dashboard with auto-sync from workspace memory",
       "owner": "Petunia",
@@ -44,11 +62,13 @@
     }
   ],
   "events": [
-    "9:28:56 PM CT | Synced from workspace memory"
+    "10:52:08 PM CT | Synced from workspace memory"
   ],
   "worklog": [
+    "Fixed Coltrane dashboard - restored checkboxes and tracking",
+    "Fixed observability dashboard display bug",
+    "Fixed observability sync timezone issue",
     "Rebuilt observability dashboard with auto-sync from workspace memory",
-    "Fixed Coltrane tracker checkbox sync issue",
-    "Coltrane schedule fix: Successfully pushed commit 1d2a19e to GitHub"
+    "Fixed Coltrane tracker checkbox sync issue"
   ]
 }
