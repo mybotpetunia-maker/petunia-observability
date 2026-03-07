@@ -1,2 +1,265 @@
-<!doctype html><html><head><meta charset='utf-8'/><meta name='viewport' content='width=device-width,initial-scale=1'/><title>Petunia Observability</title><style>body{font-family:system-ui;background:#0b1020;color:#e9eefb;margin:0;padding:18px}.card{background:#141b34;border:1px solid #2a335f;border-radius:12px;padding:14px;margin:10px 0}.muted{opacity:.75}.ok{color:#4ade80}.warn{color:#f59e0b}.err{color:#fb7185}.live{display:flex;gap:8px;align-items:center}.dot{width:9px;height:9px;border-radius:50%;background:#4ade80;box-shadow:0 0 0 0 rgba(74,222,128,.5);animation:pulse 1.8s infinite}.step{padding:8px 10px;border:1px solid #2a335f;border-radius:8px;margin:6px 0}.t{font-size:12px;opacity:.75}.bar{height:8px;background:#232c57;border-radius:99px;overflow:hidden;margin-top:6px}.fill{height:100%;background:#4ade80}.lane{padding:8px 10px;border:1px solid #2a335f;border-radius:8px;margin:6px 0}.scrollbox{max-height:220px;overflow:auto;padding-right:4px}pre{white-space:pre-wrap}@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(74,222,128,.5)}70%{box-shadow:0 0 0 12px rgba(74,222,128,0)}100%{box-shadow:0 0 0 0 rgba(74,222,128,0)}}</style><script src="/auth-check.js"></script>
-</head><body><h1 style='margin:0'>Petunia Ops</h1><div class='muted' id='updated'>Loading…</div><div class='card'><h3 style='margin:0 0 8px'>Active Work (Live)</h3><div class='live'><span class='dot'></span><span class='muted'>updates every 3s</span></div><div id='active'></div></div><div class='card'><h3 style='margin:0 0 8px'>Completed Tasks</h3><div id='completed' class='scrollbox'></div></div><div class='card'><h3 style='margin:0 0 8px'>Parallel Lanes</h3><div id='lanes'></div></div><div class='card'><h3 style='margin:0 0 8px'>Timeline</h3><pre id='events'></pre></div><script>function esc(s=''){return String(s).replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));}function cls(c){return c==='done'?'ok':c==='blocked'?'err':'warn'}async function load(){try{const r=await fetch('/api/status?ts='+Date.now());const d=await r.json();updated.textContent='Last update: '+(d.updatedAt||'n/a')+` • ${esc(d.project||'Unspecified')} • ${esc(d.currentTask||'')}`;const work=(d.activeWork||[]);const activeWork=work.filter(x=>Number(x.progress||0)<100 && (x.state||'').toLowerCase()!=='done');active.innerHTML=activeWork.map(x=>{const p=Math.max(0,Math.min(100,Number(x.progress||0)));return `<div class='step'><div><b>${esc(x.step)}</b></div><div class='t'>${esc(x.state||'')} • owner: ${esc(x.owner||'Petunia')} • ETA: ${esc(x.eta||'n/a')}</div><div class='bar'><div class='fill' style='width:${p}%'></div></div><div class='t'>${p}%${x.blocker?` • blocker: ${esc(x.blocker)}`:''}</div></div>`}).join('')||"<div class='muted'>No active steps</div>";completed.innerHTML=(d.completedTasks||[]).map(x=>`<div class='step'><div><b>${esc(x.step)}</b></div><div class='t'>done • owner: ${esc(x.owner||'Petunia')} • ${esc(x.completedAt||x.updatedAt||'recent')}</div></div>`).join('')||"<div class='muted'>No completed tasks yet</div>";lanes.innerHTML=(d.lanes||[]).map(l=>`<div class='lane'><div><b>${esc(l.name)}</b> — <span class='${cls(l.status)}'>${esc(l.status)}</span></div><div class='t'>task: ${esc(l.task||'')}</div><div class='t'>next: ${esc(l.nextAction||'')} • owner: ${esc(l.owner||'Petunia')} • blocker: ${esc(l.blockerOwner||'none')}</div></div>`).join('')||"<div class='muted'>No lanes</div>";events.textContent=(d.events||[]).join('\n');}catch(e){updated.textContent='Failed loading /api/status';}}load();setInterval(load,3000);</script></body></html>
+<!doctype html>
+<html>
+<head>
+<meta charset='utf-8'/>
+<meta name='viewport' content='width=device-width,initial-scale=1'/>
+<title>Petunia Observability</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --holo-bg: #080C10;
+  --holo-surface: #0F1419;
+  --holo-border: #1A1F26;
+  --holo-accent: #5ECDD8;
+  --holo-text: #E8EAED;
+  --holo-text-muted: #9AA0A6;
+  --holo-success: #4ade80;
+  --holo-warn: #f59e0b;
+  --holo-error: #fb7185;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--holo-bg);
+  color: var(--holo-text);
+  margin: 0;
+  padding: 24px;
+  line-height: 1.6;
+}
+
+h1 {
+  font-family: 'Bodoni Moda', serif;
+  font-weight: 700;
+  font-size: 2.5rem;
+  margin: 0 0 8px 0;
+  color: var(--holo-accent);
+  letter-spacing: -0.02em;
+}
+
+h3 {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 600;
+  font-size: 1.125rem;
+  margin: 0 0 12px;
+  color: var(--holo-text);
+}
+
+.card {
+  background: var(--holo-surface);
+  border: 1px solid var(--holo-border);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 16px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.muted {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.875rem;
+  color: var(--holo-text-muted);
+}
+
+.ok { color: var(--holo-success); }
+.warn { color: var(--holo-warn); }
+.err { color: var(--holo-error); }
+
+.live {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--holo-accent);
+  box-shadow: 0 0 0 0 rgba(94, 205, 216, 0.5);
+  animation: pulse 1.8s infinite;
+}
+
+.step {
+  padding: 12px 14px;
+  border: 1px solid var(--holo-border);
+  border-radius: 8px;
+  margin: 8px 0;
+  background: rgba(15, 20, 25, 0.5);
+}
+
+.step b {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 600;
+  color: var(--holo-text);
+}
+
+.t {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--holo-text-muted);
+  margin-top: 4px;
+}
+
+.bar {
+  height: 8px;
+  background: var(--holo-border);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.fill {
+  height: 100%;
+  background: var(--holo-accent);
+  transition: width 0.3s ease;
+}
+
+.lane {
+  padding: 12px 14px;
+  border: 1px solid var(--holo-border);
+  border-radius: 8px;
+  margin: 8px 0;
+  background: rgba(15, 20, 25, 0.5);
+}
+
+.lane b {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 600;
+  color: var(--holo-text);
+}
+
+.scrollbox {
+  max-height: 280px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.scrollbox::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbox::-webkit-scrollbar-track {
+  background: var(--holo-border);
+  border-radius: 3px;
+}
+
+.scrollbox::-webkit-scrollbar-thumb {
+  background: var(--holo-accent);
+  border-radius: 3px;
+}
+
+pre {
+  white-space: pre-wrap;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.875rem;
+  color: var(--holo-text-muted);
+  margin: 0;
+  padding: 12px;
+  background: rgba(15, 20, 25, 0.5);
+  border-radius: 6px;
+  border: 1px solid var(--holo-border);
+  max-height: 300px;
+  overflow: auto;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(94, 205, 216, 0.5); }
+  70% { box-shadow: 0 0 0 12px rgba(94, 205, 216, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(94, 205, 216, 0); }
+}
+
+#updated {
+  margin-bottom: 16px;
+}
+</style>
+<script src="/auth-check.js"></script>
+</head>
+<body>
+<h1>Petunia Ops</h1>
+<div class='muted' id='updated'>Loading…</div>
+
+<div class='card'>
+  <h3>Active Work (Live)</h3>
+  <div class='live'>
+    <span class='dot'></span>
+    <span class='muted'>updates every 3s</span>
+  </div>
+  <div id='active'></div>
+</div>
+
+<div class='card'>
+  <h3>Completed Tasks</h3>
+  <div id='completed' class='scrollbox'></div>
+</div>
+
+<div class='card'>
+  <h3>Parallel Lanes</h3>
+  <div id='lanes'></div>
+</div>
+
+<div class='card'>
+  <h3>Timeline</h3>
+  <pre id='events'></pre>
+</div>
+
+<script>
+function esc(s=''){
+  return String(s).replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+}
+
+function cls(c){
+  return c==='done'?'ok':c==='blocked'?'err':'warn';
+}
+
+async function load(){
+  try {
+    const r = await fetch('/api/status?ts='+Date.now());
+    const d = await r.json();
+    
+    updated.textContent = 'Last update: '+(d.updatedAt||'n/a')+` • ${esc(d.project||'Unspecified')} • ${esc(d.currentTask||'')}`;
+    
+    const work = (d.activeWork||[]);
+    const activeWork = work.filter(x => Number(x.progress||0)<100 && (x.state||'').toLowerCase()!=='done');
+    
+    active.innerHTML = activeWork.map(x => {
+      const p = Math.max(0,Math.min(100,Number(x.progress||0)));
+      return `<div class='step'>
+        <div><b>${esc(x.step)}</b></div>
+        <div class='t'>${esc(x.state||'')} • owner: ${esc(x.owner||'Petunia')} • ETA: ${esc(x.eta||'n/a')}</div>
+        <div class='bar'><div class='fill' style='width:${p}%'></div></div>
+        <div class='t'>${p}%${x.blocker?` • blocker: ${esc(x.blocker)}`:''}</div>
+      </div>`;
+    }).join('') || "<div class='muted'>No active steps</div>";
+    
+    completed.innerHTML = (d.completedTasks||[]).map(x => 
+      `<div class='step'>
+        <div><b>${esc(x.step)}</b></div>
+        <div class='t'>done • owner: ${esc(x.owner||'Petunia')} • ${esc(x.completedAt||x.updatedAt||'recent')}</div>
+      </div>`
+    ).join('') || "<div class='muted'>No completed tasks yet</div>";
+    
+    lanes.innerHTML = (d.lanes||[]).map(l => 
+      `<div class='lane'>
+        <div><b>${esc(l.name)}</b> — <span class='${cls(l.status)}'>${esc(l.status)}</span></div>
+        <div class='t'>task: ${esc(l.task||'')}</div>
+        <div class='t'>next: ${esc(l.nextAction||'')} • owner: ${esc(l.owner||'Petunia')} • blocker: ${esc(l.blockerOwner||'none')}</div>
+      </div>`
+    ).join('') || "<div class='muted'>No lanes</div>";
+    
+    events.textContent = (d.events||[]).join('\n');
+  } catch(e) {
+    updated.textContent = 'Failed loading /api/status';
+  }
+}
+
+load();
+setInterval(load, 3000);
+</script>
+</body>
+</html>
